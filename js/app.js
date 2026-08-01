@@ -8,8 +8,21 @@ function carica() {
   voci.forEach((voce, i) => {
     const li = document.createElement('li');
     li.textContent = voce;
+
+    const bottoneRimuovi = document.createElement('button');
+    bottoneRimuovi.textContent = '✕';
+    bottoneRimuovi.addEventListener('click', () => rimuovi(i));
+
+    li.appendChild(bottoneRimuovi);
     lista.appendChild(li);
   });
+}
+
+function rimuovi(indice) {
+  const voci = JSON.parse(localStorage.getItem('voci') || '[]');
+  voci.splice(indice, 1);
+  localStorage.setItem('voci', JSON.stringify(voci));
+  carica();
 }
 
 form.addEventListener('submit', (e) => {
