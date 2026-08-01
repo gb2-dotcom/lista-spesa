@@ -1,5 +1,6 @@
-const CACHE_NAME = 'lista-spesa-v1';
+const CACHE_NAME = 'lista-spesa-v2';
 const ASSET_DA_CACHARE = [
+  '/',
   'index.html',
   'js/app.js',
   'manifest.json',
