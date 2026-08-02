@@ -59,6 +59,10 @@ li {
   border-top: 1px solid var(--accento);
 }
 
+#banner-aggiornamento[hidden] {
+  display: none;
+}
+
 @media (prefers-color-scheme: dark) {
   :root {
     --sfondo: #242426;

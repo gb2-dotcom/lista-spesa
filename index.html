@@ -39,10 +39,24 @@
                     console.log('Nuovo stato:', nuovoWorker.state);
 
                     if (nuovoWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                        console.log('AGGIORNAMENTO PRONTO: qui andrà il banner');
+                        mostraBanner(registration.waiting);
                     }
                 });
             });
+
+            function mostraBanner(workerInAttesa) {
+                console.log('mostraBanner chiamata');
+
+                const banner = document.getElementById('banner-aggiornamento');
+                const bottone = document.getElementById('bottone-ricarica');
+
+                banner.hidden = false;
+
+                bottone.addEventListener('click', () => {
+                    console.log('Click: invio messaggio al worker in attesa');
+                    workerInAttesa.postMessage('SALTA_ATTESA');
+                });
+            }
 
         });
     }
