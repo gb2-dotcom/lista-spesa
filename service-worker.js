@@ -32,3 +32,9 @@ self.addEventListener('fetch', (event) => {
     caches.match(event.request).then((risposta) => risposta || fetch(event.request))
   );
 });
+
+self.addEventListener('message', (event) => {
+  if (event.data === 'SALTA_ATTESA') {
+    self.skipWaiting();
+  }
+});
