@@ -29,6 +29,8 @@ button {
   background: var(--accento);
   color: #ffffff;
   cursor: pointer;
+  min-width: 44px;
+  min-height: 44px;
 }
 
 ul {
