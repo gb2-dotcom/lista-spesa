@@ -12,3 +12,11 @@ body {
   margin: 0 auto;
   padding: 1rem;
 }
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --sfondo: #121212;
+    --testo: #e8e8e8;
+    --accento: #81c784;
+  }
+}
