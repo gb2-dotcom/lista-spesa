@@ -31,6 +31,10 @@
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('service-worker.js').then((registration) => {
 
+            if (registration.waiting) {
+                mostraBanner(registration.waiting);
+            }
+
             registration.addEventListener('updatefound', () => {
                 const nuovoWorker = registration.installing;
                 console.log('Trovato un nuovo service worker, sta installando…');
