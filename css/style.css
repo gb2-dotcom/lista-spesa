@@ -1,0 +1,14 @@
+:root {
+  --sfondo: #ffffff;
+  --testo: #1a1a1a;
+  --accento: #2e7d32;
+}
+
+body {
+  background: var(--sfondo);
+  color: var(--testo);
+  font-family: system-ui, sans-serif;
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 1rem;
+}
