@@ -1,4 +1,4 @@
-const CACHE_NAME = 'lista-spesa-v4';
+const CACHE_NAME = 'lista-spesa-v5';
 const ASSET_DA_CACHARE = [
   './',
   'index.html',
@@ -6,7 +6,8 @@ const ASSET_DA_CACHARE = [
   'js/app.js',
   'manifest.json',
   'icons/icon-192.png',
-  'icons/icon-512.png'
+  'icons/icon-512.png',
+  'icons/icon-512-maskable.png'
 ];
 
 self.addEventListener('install', (event) => {
