@@ -12,10 +12,41 @@ body {
   margin: 0 auto;
   padding: 1rem;
 }
+input {
+  font: inherit;
+  padding: 0.6rem;
+  border: 1px solid var(--testo);
+  border-radius: 6px;
+  background: var(--sfondo);
+  color: var(--testo);
+}
+
+button {
+  font: inherit;
+  padding: 0.6rem 1rem;
+  border: none;
+  border-radius: 6px;
+  background: var(--accento);
+  color: #ffffff;
+  cursor: pointer;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+}
+
+li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.6rem 0;
+  border-bottom: 1px solid var(--accento);
+}
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --sfondo: #121212;
+    --sfondo: #242426;
     --testo: #e8e8e8;
     --accento: #81c784;
   }
