@@ -36,7 +36,6 @@
                 console.log('Trovato un nuovo service worker, sta installando…');
 
                 nuovoWorker.addEventListener('statechange', () => {
-                    console.log('Nuovo stato:', nuovoWorker.state);
 
                     if (nuovoWorker.state === 'installed' && navigator.serviceWorker.controller) {
                         mostraBanner(registration.waiting);
@@ -44,8 +43,12 @@
                 });
             });
 
+            navigator.serviceWorker.addEventListener('controllerchange', () => {
+                console.log('Nuovo service worker al comando: ricarico');
+                window.location.reload();
+            });
+
             function mostraBanner(workerInAttesa) {
-                console.log('mostraBanner chiamata');
 
                 const banner = document.getElementById('banner-aggiornamento');
                 const bottone = document.getElementById('bottone-ricarica');
