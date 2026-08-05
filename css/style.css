@@ -2,6 +2,7 @@
   --sfondo: #ffffff;
   --testo: #1a1a1a;
   --accento: #2e7d32;
+  --testo-su-accento: #ffffff;
 }
 
 body {
@@ -27,7 +28,7 @@ button {
   border: none;
   border-radius: 6px;
   background: var(--accento);
-  color: #ffffff;
+  color: var(--testo-su-accento);
   cursor: pointer;
   min-width: 44px;
   min-height: 44px;
@@ -65,10 +66,16 @@ li {
   display: none;
 }
 
+:focus-visible {
+  outline: 3px solid var(--testo);
+  outline-offset: 2px;
+}
+
 @media (prefers-color-scheme: dark) {
   :root {
     --sfondo: #242426;
     --testo: #e8e8e8;
     --accento: #81c784;
+    --testo-su-accento: #1a1a1a;
   }
 }
