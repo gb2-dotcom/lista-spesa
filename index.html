@@ -30,6 +30,16 @@
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('service-worker.js').then((registration) => {
 
+            const bottone = document.getElementById('bottone-ricarica');
+            let workerInAttesa = null;
+
+            bottone.addEventListener('click', () => {
+                console.log('Click: invio messaggio al worker in attesa');
+                if (workerInAttesa) {
+                    workerInAttesa.postMessage('SALTA_ATTESA');
+                }
+            });
+
             if (registration.waiting) {
                 mostraBanner(registration.waiting);
             }
@@ -51,17 +61,9 @@
                 window.location.reload();
             });
 
-            function mostraBanner(workerInAttesa) {
-
-                const banner = document.getElementById('banner-aggiornamento');
-                const bottone = document.getElementById('bottone-ricarica');
-
-                banner.hidden = false;
-
-                bottone.addEventListener('click', () => {
-                    console.log('Click: invio messaggio al worker in attesa');
-                    workerInAttesa.postMessage('SALTA_ATTESA');
-                });
+            function mostraBanner(worker) {
+                workerInAttesa = worker;
+                document.getElementById('banner-aggiornamento').hidden = false;
             }
 
         });
