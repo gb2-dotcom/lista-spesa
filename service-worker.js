@@ -1,10 +1,11 @@
-const CACHE_NAME = 'lista-spesa-v17';
+const CACHE_NAME = 'lista-spesa-v18';
 const ASSET_DA_CACHARE = [
   './',
   'index.html',
   'css/style.css',
   'js/app.js',
   'js/registra-sw.js',
+  'js/blocca-zoom.js',
   'manifest.json',
   'icons/icon-192.png',
   'icons/icon-512.png',
