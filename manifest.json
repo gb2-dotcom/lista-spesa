@@ -1,10 +1,11 @@
 {
   "name": "Lista della spesa",
   "short_name": "Spesa",
-  "start_url": "index.html",
+  "start_url": "./",
+  "scope": "./",
   "display": "standalone",
   "background_color": "#ffffff",
-  "theme_color": "#2e7d32",
+  "theme_color": "#ffffff",
   "icons": [
     {
       "src": "icons/icon-192.png",
