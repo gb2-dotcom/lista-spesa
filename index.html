@@ -66,6 +66,8 @@
                 document.getElementById('banner-aggiornamento').hidden = false;
             }
 
+        }).catch((errore) => {
+            console.error('Registrazione del service worker fallita', errore);
         });
     }
   </script>
