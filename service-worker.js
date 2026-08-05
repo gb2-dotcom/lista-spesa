@@ -1,5 +1,5 @@
-const CACHE_NAME = 'lista-spesa-v19';
-const ASSET_DA_CACHARE = [
+const CACHE_NAME = 'lista-spesa-v20';
+const RISORSE_IN_CACHE = [
   './',
   'index.html',
   'css/style.css',
@@ -14,7 +14,7 @@ const ASSET_DA_CACHARE = [
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSET_DA_CACHARE))
+    caches.open(CACHE_NAME).then((cache) => cache.addAll(RISORSE_IN_CACHE))
   );
 });
 
