@@ -3,11 +3,23 @@ const input = document.getElementById('input-voce');
 const lista = document.getElementById('lista');
 
 function leggiVoci() {
-  return JSON.parse(localStorage.getItem('voci') || '[]');
+  try {
+    const dati = JSON.parse(localStorage.getItem('voci') || '[]');
+    if (!Array.isArray(dati)) {
+      return [];
+    }
+    return dati;
+  } catch (errore) {
+    return [];
+  }
 }
 
 function salvaVoci(voci) {
-  localStorage.setItem('voci', JSON.stringify(voci));
+  try {
+    localStorage.setItem('voci', JSON.stringify(voci));
+  } catch (errore) {
+    console.warn('Non è stato possibile salvare la lista', errore);
+  }
 }
 
 function carica() {
