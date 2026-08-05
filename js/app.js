@@ -48,8 +48,16 @@ function rimuovi(indice) {
 
 form.addEventListener('submit', (e) => {
   e.preventDefault();
+
+  const voce = input.value.trim();
+  if (!voce) {
+    input.value = '';
+    input.focus();
+    return;
+  }
+
   const voci = leggiVoci();
-  voci.push(input.value.trim());
+  voci.push(voce);
   salvaVoci(voci);
   input.value = '';
   carica();
