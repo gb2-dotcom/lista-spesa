@@ -33,8 +33,12 @@
             const bottone = document.getElementById('bottone-ricarica');
             let workerInAttesa = null;
 
+            function mostraBanner(worker) {
+                workerInAttesa = worker;
+                document.getElementById('banner-aggiornamento').hidden = false;
+            }
+
             bottone.addEventListener('click', () => {
-                console.log('Click: invio messaggio al worker in attesa');
                 if (workerInAttesa) {
                     workerInAttesa.postMessage('SALTA_ATTESA');
                 }
@@ -46,7 +50,6 @@
 
             registration.addEventListener('updatefound', () => {
                 const nuovoWorker = registration.installing;
-                console.log('Trovato un nuovo service worker, sta installando…');
 
                 nuovoWorker.addEventListener('statechange', () => {
 
@@ -57,14 +60,8 @@
             });
 
             navigator.serviceWorker.addEventListener('controllerchange', () => {
-                console.log('Nuovo service worker al comando: ricarico');
                 window.location.reload();
             });
-
-            function mostraBanner(worker) {
-                workerInAttesa = worker;
-                document.getElementById('banner-aggiornamento').hidden = false;
-            }
 
         }).catch((errore) => {
             console.error('Registrazione del service worker fallita', errore);
