@@ -1,9 +1,10 @@
-const CACHE_NAME = 'lista-spesa-v14';
+const CACHE_NAME = 'lista-spesa-v15';
 const ASSET_DA_CACHARE = [
   './',
   'index.html',
   'css/style.css',
   'js/app.js',
+  'js/registra-sw.js',
   'manifest.json',
   'icons/icon-192.png',
   'icons/icon-512.png',
