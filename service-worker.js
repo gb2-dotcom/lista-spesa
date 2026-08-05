@@ -1,4 +1,4 @@
-const CACHE_NAME = 'lista-spesa-v20';
+const CACHE_NAME = 'lista-spesa-v21';
 const RISORSE_IN_CACHE = [
   './',
   'index.html',
@@ -14,7 +14,13 @@ const RISORSE_IN_CACHE = [
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(RISORSE_IN_CACHE))
+    caches.open(CACHE_NAME).then((cache) =>
+      // cache: 'reload' salta la cache HTTP del browser: le risorse messe
+      // da parte all'installazione devono arrivare fresche dalla rete.
+      cache.addAll(
+        RISORSE_IN_CACHE.map((risorsa) => new Request(risorsa, { cache: 'reload' }))
+      )
+    )
   );
 });
 
