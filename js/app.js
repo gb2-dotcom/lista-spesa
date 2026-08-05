@@ -31,6 +31,7 @@ function carica() {
 
     const bottoneRimuovi = document.createElement('button');
     bottoneRimuovi.textContent = '✕';
+    bottoneRimuovi.setAttribute('aria-label', `Rimuovi ${voce}`);
     bottoneRimuovi.addEventListener('click', () => rimuovi(i));
 
     li.appendChild(bottoneRimuovi);
