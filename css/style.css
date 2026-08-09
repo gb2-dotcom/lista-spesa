@@ -57,6 +57,51 @@ li {
   border-bottom: 1px solid var(--accento);
 }
 
+/* Il cerchietto per segnare una voce come presa. appearance: none
+   toglie la casella di sistema e lascia disegnare il cerchio, ma
+   l'elemento resta una checkbox vera per tastiera e screen reader. */
+li input[type="checkbox"] {
+  appearance: none;
+  flex: none;
+  width: 44px;
+  height: 44px;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: none;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+
+li input[type="checkbox"]::before {
+  content: '✓';
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border: 2px solid var(--accento);
+  border-radius: 50%;
+  /* Il segno c'è sempre: da spuntare è solo trasparente, così il
+     cerchio non cambia dimensione quando lo selezioni. */
+  color: transparent;
+  font-size: 0.9rem;
+  line-height: 1;
+}
+
+li input[type="checkbox"]:checked::before {
+  background: var(--accento);
+  color: var(--testo-su-accento);
+}
+
+li.presa .voce {
+  opacity: 0.6;
+}
+
+li.presa .nome {
+  text-decoration: line-through;
+}
+
 /* La voce è un bottone per essere attivabile da tastiera, ma deve
    sembrare il testo della lista: niente sfondo, allineata a sinistra. */
 li .voce {
@@ -72,6 +117,10 @@ li .voce {
   color: var(--testo);
   white-space: normal;
   overflow-wrap: anywhere;
+}
+
+li .nome {
+  min-width: 0;
 }
 
 /* Segnala che la voce si può toccare per modificarla. aria-hidden non

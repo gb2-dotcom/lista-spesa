@@ -8,7 +8,15 @@ function leggiVoci() {
     if (!Array.isArray(dati)) {
       return [];
     }
-    return dati;
+
+    // Le liste salvate prima della spunta sono elenchi di testi.
+    // Qui diventano oggetti, così le installazioni già in uso non
+    // perdono la lista. La conversione avviene a ogni lettura: è
+    // ripetibile senza danni e non serve riscrivere subito i dati.
+    return dati
+      .map((voce) => (typeof voce === 'string' ? { nome: voce, preso: false } : voce))
+      .filter((voce) => voce && typeof voce.nome === 'string')
+      .map((voce) => ({ nome: voce.nome, preso: voce.preso === true }));
   } catch (errore) {
     return [];
   }
@@ -27,25 +35,52 @@ function carica() {
   lista.innerHTML = '';
   voci.forEach((voce, i) => {
     const li = document.createElement('li');
+    if (voce.preso) {
+      li.classList.add('presa');
+    }
+
+    // Una casella vera, non un bottone travestito: lo screen reader
+    // annuncia da sé se è selezionata, senza aria aggiuntivo.
+    const casella = document.createElement('input');
+    casella.type = 'checkbox';
+    casella.checked = voce.preso;
+    casella.setAttribute('aria-label', `Preso: ${voce.nome}`);
+    casella.addEventListener('change', () => cambiaStato(i, casella.checked, li));
 
     // La voce è un bottone, non testo inerte: così è raggiungibile da
     // tastiera e lo screen reader la annuncia come attivabile.
     const bottoneModifica = document.createElement('button');
     bottoneModifica.type = 'button';
     bottoneModifica.className = 'voce';
-    bottoneModifica.textContent = voce;
-    bottoneModifica.setAttribute('aria-label', `Modifica ${voce}`);
+    bottoneModifica.setAttribute('aria-label', `Modifica ${voce.nome}`);
+
+    // Il nome sta in uno span suo: così la barratura del "preso" tocca
+    // il testo e non anche la matita.
+    const nome = document.createElement('span');
+    nome.className = 'nome';
+    nome.textContent = voce.nome;
+    bottoneModifica.appendChild(nome);
     bottoneModifica.addEventListener('click', () => apriModifica(i));
 
     const bottoneRimuovi = document.createElement('button');
     bottoneRimuovi.type = 'button';
     bottoneRimuovi.textContent = '✕';
-    bottoneRimuovi.setAttribute('aria-label', `Rimuovi ${voce}`);
+    bottoneRimuovi.setAttribute('aria-label', `Rimuovi ${voce.nome}`);
     bottoneRimuovi.addEventListener('click', () => rimuovi(i));
 
-    li.append(bottoneModifica, bottoneRimuovi);
+    li.append(casella, bottoneModifica, bottoneRimuovi);
     lista.appendChild(li);
   });
+}
+
+function cambiaStato(indice, preso, li) {
+  const voci = leggiVoci();
+  voci[indice].preso = preso;
+  salvaVoci(voci);
+
+  // Aggiorna solo questa riga invece di ridisegnare la lista: così la
+  // casella appena toccata non perde il focus.
+  li.classList.toggle('presa', preso);
 }
 
 function tornaAllaRiga(indice) {
@@ -68,8 +103,8 @@ function apriModifica(indice) {
 
   const campo = document.createElement('input');
   campo.type = 'text';
-  campo.value = voce;
-  campo.setAttribute('aria-label', `Nuovo nome per ${voce}`);
+  campo.value = voce.nome;
+  campo.setAttribute('aria-label', `Nuovo nome per ${voce.nome}`);
 
   const bottoneSalva = document.createElement('button');
   bottoneSalva.type = 'submit';
@@ -87,7 +122,7 @@ function apriModifica(indice) {
     }
 
     const voci = leggiVoci();
-    voci[indice] = nuovaVoce;
+    voci[indice].nome = nuovaVoce;
     salvaVoci(voci);
     tornaAllaRiga(indice);
   });
@@ -121,7 +156,7 @@ form.addEventListener('submit', (e) => {
   }
 
   const voci = leggiVoci();
-  voci.push(voce);
+  voci.push({ nome: voce, preso: false });
   salvaVoci(voci);
   input.value = '';
   carica();
