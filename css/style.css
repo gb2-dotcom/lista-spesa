@@ -52,8 +52,40 @@ li {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 0.5rem;
   padding: 0.6rem 0;
   border-bottom: 1px solid var(--accento);
+}
+
+/* La voce è un bottone per essere attivabile da tastiera, ma deve
+   sembrare il testo della lista: niente sfondo, allineata a sinistra. */
+li .voce {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  flex: 1;
+  min-width: 0;
+  padding: 0;
+  text-align: left;
+  background: none;
+  color: var(--testo);
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+/* Segnala che la voce si può toccare per modificarla. aria-hidden non
+   serve: il bottone ha già un aria-label, che sostituisce il contenuto. */
+li .voce::after {
+  content: '✎';
+  flex: none;
+  opacity: 0.45;
+  font-size: 1.2em;
+  line-height: 1;
+}
+
+li form {
+  flex: 1;
 }
 
 #banner-aggiornamento {

@@ -27,16 +27,80 @@ function carica() {
   lista.innerHTML = '';
   voci.forEach((voce, i) => {
     const li = document.createElement('li');
-    li.textContent = voce;
+
+    // La voce è un bottone, non testo inerte: così è raggiungibile da
+    // tastiera e lo screen reader la annuncia come attivabile.
+    const bottoneModifica = document.createElement('button');
+    bottoneModifica.type = 'button';
+    bottoneModifica.className = 'voce';
+    bottoneModifica.textContent = voce;
+    bottoneModifica.setAttribute('aria-label', `Modifica ${voce}`);
+    bottoneModifica.addEventListener('click', () => apriModifica(i));
 
     const bottoneRimuovi = document.createElement('button');
+    bottoneRimuovi.type = 'button';
     bottoneRimuovi.textContent = '✕';
     bottoneRimuovi.setAttribute('aria-label', `Rimuovi ${voce}`);
     bottoneRimuovi.addEventListener('click', () => rimuovi(i));
 
-    li.appendChild(bottoneRimuovi);
+    li.append(bottoneModifica, bottoneRimuovi);
     lista.appendChild(li);
   });
+}
+
+function tornaAllaRiga(indice) {
+  carica();
+  lista.children[indice]?.querySelector('.voce')?.focus();
+}
+
+function apriModifica(indice) {
+  // Ridisegna prima di aprire: chiude un'eventuale altra riga in modifica.
+  carica();
+
+  const li = lista.children[indice];
+  if (!li) {
+    return;
+  }
+
+  const voce = leggiVoci()[indice];
+
+  const formModifica = document.createElement('form');
+
+  const campo = document.createElement('input');
+  campo.type = 'text';
+  campo.value = voce;
+  campo.setAttribute('aria-label', `Nuovo nome per ${voce}`);
+
+  const bottoneSalva = document.createElement('button');
+  bottoneSalva.type = 'submit';
+  bottoneSalva.textContent = 'Salva';
+
+  formModifica.append(campo, bottoneSalva);
+
+  formModifica.addEventListener('submit', (e) => {
+    e.preventDefault();
+
+    const nuovaVoce = campo.value.trim();
+    if (!nuovaVoce) {
+      campo.focus();
+      return;
+    }
+
+    const voci = leggiVoci();
+    voci[indice] = nuovaVoce;
+    salvaVoci(voci);
+    tornaAllaRiga(indice);
+  });
+
+  campo.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      tornaAllaRiga(indice);
+    }
+  });
+
+  li.replaceChildren(formModifica);
+  campo.focus();
+  campo.select();
 }
 
 function rimuovi(indice) {
