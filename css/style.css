@@ -1,8 +1,15 @@
 :root {
   --sfondo: #ffffff;
   --testo: #1a1a1a;
+  /* Testo secondario e icone: attenuato ma sempre sopra 4.5:1. */
+  --tenue: #5f6368;
+  --bordo: #e4e4e7;
   --accento: #2e7d32;
+  --accento-tenue: #eef5ef;
   --testo-su-accento: #ffffff;
+  --pericolo: #b3261e;
+  --testo-su-pericolo: #ffffff;
+  --raggio: 10px;
 }
 
 body {
@@ -10,9 +17,22 @@ body {
   background: var(--sfondo);
   color: var(--testo);
   font-family: system-ui, sans-serif;
-  max-width: 500px;
+  line-height: 1.5;
+  max-width: 520px;
   margin: 0 auto;
-  padding: 1rem;
+  padding: 1.25rem 1rem 2rem;
+  -webkit-text-size-adjust: 100%;
+}
+
+h1 {
+  font-size: 1.55rem;
+  font-weight: 650;
+  letter-spacing: -0.02em;
+  margin: 0 0 1.25rem;
+}
+
+h1:focus {
+  outline: none;
 }
 
 form {
@@ -24,37 +44,57 @@ input {
   flex: 1;
   min-width: 0;
   font: inherit;
-  padding: 0.6rem;
-  border: 1px solid var(--testo);
-  border-radius: 6px;
+  padding: 0.7rem 0.85rem;
+  border: 1px solid var(--bordo);
+  border-radius: var(--raggio);
   background: var(--sfondo);
   color: var(--testo);
+  transition: border-color 0.18s ease;
+}
+
+input:focus {
+  border-color: var(--accento);
 }
 
 button {
   font: inherit;
   padding: 0.6rem 1rem;
   border: none;
-  border-radius: 6px;
+  border-radius: var(--raggio);
   background: var(--accento);
   color: var(--testo-su-accento);
+  font-weight: 600;
   cursor: pointer;
   min-width: 44px;
   min-height: 44px;
+  transition: background-color 0.18s ease, color 0.18s ease,
+    border-color 0.18s ease, opacity 0.18s ease, transform 0.12s ease;
+}
+
+/* Il tocco deve dare una risposta immediata, prima ancora che l'azione
+   produca un effetto visibile altrove. */
+button:active {
+  transform: scale(0.96);
 }
 
 ul {
   list-style: none;
   padding: 0;
+  margin: 1rem 0 0;
 }
 
 li {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.6rem 0;
-  border-bottom: 1px solid var(--accento);
+  gap: 0.25rem;
+  padding: 0.35rem 0;
+  border-bottom: 1px solid var(--bordo);
+}
+
+/* L'ultima riga non ha niente da separare: la linea sospesa in fondo
+   è uno dei dettagli che fanno sembrare una schermata non finita. */
+li:last-child {
+  border-bottom: none;
 }
 
 /* Il cerchietto per segnare una voce come presa. appearance: none
@@ -78,28 +118,36 @@ li input[type="checkbox"]::before {
   content: '✓';
   display: grid;
   place-items: center;
-  width: 26px;
-  height: 26px;
-  border: 2px solid var(--accento);
+  width: 24px;
+  height: 24px;
+  /* --bordo sarebbe più elegante ma sta a 1.3:1: un cerchio che quasi
+     non si vede. I controlli vogliono almeno 3:1. */
+  border: 2px solid var(--tenue);
   border-radius: 50%;
   /* Il segno c'è sempre: da spuntare è solo trasparente, così il
      cerchio non cambia dimensione quando lo selezioni. */
   color: transparent;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   line-height: 1;
+  transition: background-color 0.2s ease, border-color 0.2s ease,
+    color 0.2s ease;
+}
+
+li input[type="checkbox"]:hover::before {
+  border-color: var(--accento);
 }
 
 li input[type="checkbox"]:checked::before {
   background: var(--accento);
+  border-color: var(--accento);
   color: var(--testo-su-accento);
+  animation: spunta 0.26s ease;
 }
 
-li.presa .voce {
-  opacity: 0.6;
-}
-
-li.presa .nome {
-  text-decoration: line-through;
+@keyframes spunta {
+  50% {
+    transform: scale(1.14);
+  }
 }
 
 /* La voce è un bottone per essere attivabile da tastiera, ma deve
@@ -111,7 +159,8 @@ li .voce {
   gap: 0.5rem;
   flex: 1;
   min-width: 0;
-  padding: 0;
+  padding: 0.25rem 0;
+  font-weight: 400;
   text-align: left;
   background: none;
   color: var(--testo);
@@ -121,6 +170,21 @@ li .voce {
 
 li .nome {
   min-width: 0;
+  /* Il colore parte trasparente e diventa visibile: così la barratura
+     compare in dissolvenza invece di apparire di scatto. Passa anche
+     dai nomi che vanno a capo, cosa che una linea disegnata a mano
+     con un pseudo-elemento non farebbe. */
+  text-decoration: line-through;
+  text-decoration-color: transparent;
+  text-decoration-thickness: 1.5px;
+  transition: text-decoration-color 0.25s ease, opacity 0.25s ease;
+}
+
+li.presa .nome {
+  text-decoration-color: currentColor;
+  /* Attenuato quanto basta a distinguerlo, non tanto da scendere sotto
+     il 4.5:1: resta testo che si deve poter leggere. */
+  opacity: 0.68;
 }
 
 /* Segnala che la voce si può toccare per modificarla. aria-hidden non
@@ -128,54 +192,147 @@ li .nome {
 li .voce::after {
   content: '✎';
   flex: none;
-  opacity: 0.45;
-  font-size: 1.2em;
+  color: var(--tenue);
+  opacity: 0.75;
+  font-size: 1.15em;
   line-height: 1;
+  transition: opacity 0.18s ease;
+}
+
+li .voce:hover::after,
+li .voce:focus-visible::after {
+  opacity: 1;
+}
+
+li.presa .voce::after {
+  opacity: 0.5;
+}
+
+/* La ✕ cancella per sempre: deve stare in secondo piano rispetto ad
+   "Aggiungi", non essere il blocco più acceso dello schermo. Il colore
+   di pericolo arriva quando ci si avvicina davvero. */
+li .voce ~ button {
+  flex: none;
+  padding: 0;
+  font-size: 1.1rem;
+  background: none;
+  color: var(--tenue);
+}
+
+li .voce ~ button:hover,
+li .voce ~ button:focus-visible {
+  color: var(--pericolo);
 }
 
 li form {
   flex: 1;
+  padding: 0.25rem 0;
+}
+
+/* Mentre scorre il secondo di attesa la riga si allontana: il
+   movimento spiega che sta per spostarsi, invece di farla sparire
+   di colpo. Resta leggibile per più di metà del tempo, perché in
+   quella finestra si può ancora togliere la spunta. */
+#lista li.presa {
+  animation: archiviazione 1s ease-in forwards;
+}
+
+@keyframes archiviazione {
+  0%,
+  55% {
+    opacity: 1;
+    transform: none;
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(1.5rem);
+  }
 }
 
 #sezione-completate {
-  margin-top: 1.5rem;
+  margin-top: 1.75rem;
 }
 
 #sezione-completate[hidden] {
   display: none;
 }
 
-/* Niente display: flex qui: toglierebbe il triangolino nativo, che è
-   l'unico indizio che la sezione si apre. */
+/* Il triangolino nativo non si può animare: qui è sostituito da uno
+   disegnato, che ruota all'apertura. */
 #sezione-completate summary {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  list-style: none;
   cursor: pointer;
-  padding: 0.6rem 0;
+  padding: 0.5rem 0;
   min-height: 44px;
   box-sizing: border-box;
+  color: var(--tenue);
+}
+
+#sezione-completate summary::-webkit-details-marker {
+  display: none;
+}
+
+#sezione-completate summary::before {
+  content: '';
+  flex: none;
+  width: 0;
+  height: 0;
+  border-left: 6px solid currentColor;
+  border-top: 4.5px solid transparent;
+  border-bottom: 4.5px solid transparent;
+  transition: transform 0.2s ease;
+}
+
+#sezione-completate[open] summary::before {
+  transform: rotate(90deg);
 }
 
 #sezione-completate summary h2 {
-  display: inline;
-  font-size: 1rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
   margin: 0;
-  opacity: 0.7;
+}
+
+#sezione-completate[open] > *:not(summary) {
+  animation: apertura 0.22s ease;
+}
+
+@keyframes apertura {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
 }
 
 /* I controlli restano a contrasto pieno anche qui: sbiadire un bottone
    lo rende più difficile da vedere per chi già fatica. A essere
-   attenuato è il testo, tramite la classe .presa. */
+   attenuato è il testo delle voci prese. */
 #cancella-completate {
-  margin: 0.25rem 0 0.5rem;
+  margin: 0.25rem 0 0.25rem;
   padding: 0.5rem 0.9rem;
   min-width: 0;
+  /* Secondario nel colore, non nella dimensione: rimpicciolirlo sotto
+     i 44px lo renderebbe difficile da centrare col dito. */
+  min-height: 44px;
+  font-size: 0.9rem;
   background: none;
-  color: var(--testo);
-  border: 1px solid var(--testo);
+  color: var(--tenue);
+  border: 1px solid var(--bordo);
+}
+
+#cancella-completate:hover {
+  color: var(--pericolo);
+  border-color: var(--pericolo);
 }
 
 #cancella-completate.conferma {
-  background: var(--testo);
-  color: var(--sfondo);
+  background: var(--pericolo);
+  border-color: var(--pericolo);
+  color: var(--testo-su-pericolo);
 }
 
 #banner-aggiornamento {
@@ -187,10 +344,18 @@ li form {
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  padding: 1rem;
-  padding-bottom: calc(1rem + env(safe-area-inset-bottom));
+  padding: 0.85rem 1rem;
+  padding-bottom: calc(0.85rem + env(safe-area-inset-bottom));
   background: var(--sfondo);
-  border-top: 1px solid var(--accento);
+  border-top: 1px solid var(--bordo);
+  box-shadow: 0 -8px 24px rgb(0 0 0 / 0.08);
+  animation: salita 0.28s ease;
+}
+
+@keyframes salita {
+  from {
+    transform: translateY(100%);
+  }
 }
 
 #banner-aggiornamento[hidden] {
@@ -198,15 +363,44 @@ li form {
 }
 
 :focus-visible {
-  outline: 3px solid var(--testo);
-  outline-offset: 2px;
+  outline: 2px solid var(--accento);
+  outline-offset: 3px;
+  border-radius: 4px;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --sfondo: #242426;
+    /* Allineato al theme-color dichiarato in index.html. */
+    --sfondo: #121212;
     --testo: #e8e8e8;
+    --tenue: #a1a1a6;
+    --bordo: #2c2c2e;
     --accento: #81c784;
-    --testo-su-accento: #1a1a1a;
+    --accento-tenue: #1b241c;
+    --testo-su-accento: #12210f;
+    --pericolo: #f2b8b5;
+    --testo-su-pericolo: #601410;
+  }
+
+  #banner-aggiornamento {
+    box-shadow: 0 -8px 24px rgb(0 0 0 / 0.5);
+  }
+}
+
+/* Chi ha chiesto meno movimento al sistema lo ha fatto spesso per
+   nausea o vertigini: qui si toglie tutto, non si accorcia soltanto. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  /* Senza questo la riga in attesa salterebbe subito a invisibile e
+     resterebbe un buco per un secondo: meglio lasciarla ferma. */
+  #lista li.presa {
+    animation: none;
   }
 }
