@@ -1,11 +1,10 @@
-const CACHE_NAME = 'lista-spesa-v22';
+const CACHE_NAME = 'lista-spesa-v23';
 const RISORSE_IN_CACHE = [
   './',
   'index.html',
   'css/style.css',
   'js/app.js',
   'js/registra-sw.js',
-  'js/blocca-zoom.js',
   'manifest.json',
   'icons/icon-192.png',
   'icons/icon-512.png',
