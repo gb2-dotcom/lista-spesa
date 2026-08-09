@@ -12,7 +12,9 @@
   <title>Lista della spesa</title>
 </head>
 <body>
-  <h1>Lista della spesa</h1>
+  <!-- tabindex="-1" per poterci riportare il focus dopo aver cancellato
+       le completate: il bottone che si è toccato sparisce insieme a loro. -->
+  <h1 tabindex="-1">Lista della spesa</h1>
 
   <main>
     <form id="form-aggiungi">
@@ -21,6 +23,12 @@
     </form>
 
     <ul id="lista"></ul>
+
+    <section id="sezione-completate" aria-labelledby="titolo-completate" hidden>
+      <h2 id="titolo-completate">Completate (<span id="conteggio-completate">0</span>)</h2>
+      <ul id="lista-completate"></ul>
+      <button id="cancella-completate" type="button">Cancella le completate</button>
+    </section>
   </main>
   
   <div id="banner-aggiornamento" role="status" hidden>

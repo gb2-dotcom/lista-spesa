@@ -137,6 +137,37 @@ li form {
   flex: 1;
 }
 
+#sezione-completate {
+  margin-top: 1.5rem;
+}
+
+#sezione-completate[hidden] {
+  display: none;
+}
+
+#sezione-completate h2 {
+  font-size: 1rem;
+  margin: 0 0 0.5rem;
+  opacity: 0.7;
+}
+
+/* I controlli restano a contrasto pieno anche qui: sbiadire un bottone
+   lo rende più difficile da vedere per chi già fatica. A essere
+   attenuato è il testo, tramite la classe .presa. */
+#cancella-completate {
+  margin-top: 0.5rem;
+  padding: 0.5rem 0.9rem;
+  min-width: 0;
+  background: none;
+  color: var(--testo);
+  border: 1px solid var(--testo);
+}
+
+#cancella-completate.conferma {
+  background: var(--testo);
+  color: var(--sfondo);
+}
+
 #banner-aggiornamento {
   position: fixed;
   bottom: 0;
