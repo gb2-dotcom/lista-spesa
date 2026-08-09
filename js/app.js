@@ -110,8 +110,18 @@ function carica() {
 
 function ridisegnaTenendoIlFocus(id, avevaIlFocus) {
   carica();
-  if (avevaIlFocus) {
-    document.querySelector(`[data-id="${id}"] input[type="checkbox"]`)?.focus();
+  if (!avevaIlFocus) {
+    return;
+  }
+
+  const casella = document.querySelector(`[data-id="${id}"] input[type="checkbox"]`);
+  casella?.focus();
+
+  // Dentro una sezione chiusa la casella non è raggiungibile e il
+  // focus() non fa niente: senza questo si finirebbe sul body. Il
+  // titolo della sezione dice dove è andata a finire la voce.
+  if (casella && document.activeElement !== casella) {
+    sezioneCompletate.querySelector('summary')?.focus();
   }
 }
 

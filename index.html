@@ -24,11 +24,13 @@
 
     <ul id="lista"></ul>
 
-    <section id="sezione-completate" aria-labelledby="titolo-completate" hidden>
-      <h2 id="titolo-completate">Completate (<span id="conteggio-completate">0</span>)</h2>
-      <ul id="lista-completate"></ul>
+    <!-- details/summary danno gratis apertura al tocco, gestione da
+         tastiera e l'annuncio di espanso/compresso. -->
+    <details id="sezione-completate" hidden>
+      <summary><h2>Completate (<span id="conteggio-completate">0</span>)</h2></summary>
       <button id="cancella-completate" type="button">Cancella le completate</button>
-    </section>
+      <ul id="lista-completate"></ul>
+    </details>
   </main>
   
   <div id="banner-aggiornamento" role="status" hidden>
