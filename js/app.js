@@ -256,7 +256,10 @@ form.addEventListener('submit', (e) => {
   }
 
   const voci = leggiVoci();
-  voci.push({ id: nuovoId(), nome, preso: false });
+  // In cima e non in fondo: la voce appena scritta compare subito sotto
+  // al campo, dove si sta già guardando. In fondo a una lista lunga
+  // finirebbe fuori dallo schermo, senza conferma di essere stata presa.
+  voci.unshift({ id: nuovoId(), nome, preso: false });
   salvaVoci(voci);
   input.value = '';
   carica();
