@@ -199,8 +199,6 @@ li input[type="checkbox"]:checked::before {
 li .voce {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 0.5rem;
   flex: 1;
   min-width: 0;
   padding: 0.25rem 0;
@@ -229,27 +227,6 @@ li.presa .nome {
   /* Attenuato quanto basta a distinguerlo, non tanto da scendere sotto
      il 4.5:1: resta testo che si deve poter leggere. */
   opacity: 0.68;
-}
-
-/* Segnala che la voce si può toccare per modificarla. aria-hidden non
-   serve: il bottone ha già un aria-label, che sostituisce il contenuto. */
-li .voce::after {
-  content: '✎';
-  flex: none;
-  color: var(--tenue);
-  opacity: 0.75;
-  font-size: 1.15em;
-  line-height: 1;
-  transition: opacity 0.18s ease;
-}
-
-li .voce:hover::after,
-li .voce:focus-visible::after {
-  opacity: 1;
-}
-
-li.presa .voce::after {
-  opacity: 0.5;
 }
 
 /* La ✕ cancella per sempre: deve stare in secondo piano rispetto ad

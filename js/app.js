@@ -17,6 +17,38 @@ const inTransito = new Map();
 let confermaCancellazione = false;
 let timerConferma = null;
 
+// Stacca l'ascoltatore della riga in modifica, se ce n'è una aperta. Va
+// tenuto qui fuori perché la riga può sparire per vie che non passano
+// dalla modifica stessa: una spunta, una cancellazione, un ridisegno.
+let staccaModificaAperta = null;
+
+// Butta via il click che sta per arrivare, prima che raggiunga chiunque.
+//
+// Serve quando un tocco chiude la riga in modifica: il ridisegno mette
+// un elemento nuovo dove c'era il dito, e col tocco il bersaglio del
+// click viene deciso al rilascio, quindi finirebbe su quell'elemento
+// aprendo una modifica che nessuno ha chiesto. Annullare pointerdown non
+// basta: sopprime gli eventi mouse di compatibilità, non questo click.
+//
+// In cattura, per arrivare prima di ogni gestore. Il timer copre il caso
+// in cui il click non arrivi mai — il gesto diventa uno scorrimento — e
+// senza di lui resterebbe in agguato sul primo tocco successivo.
+function inghiottiIlProssimoClick() {
+  const blocca = (e) => {
+    e.stopPropagation();
+    e.preventDefault();
+    pulisci();
+  };
+
+  const pulisci = () => {
+    clearTimeout(timer);
+    document.removeEventListener('click', blocca, true);
+  };
+
+  const timer = setTimeout(pulisci, 400);
+  document.addEventListener('click', blocca, true);
+}
+
 function nuovoId() {
   return crypto.randomUUID?.() ?? `${Date.now()}-${Math.random().toString(16).slice(2)}`;
 }
@@ -76,8 +108,8 @@ function creaRiga(voce) {
   bottoneModifica.setAttribute('aria-label', `Modifica ${voce.nome}`);
   bottoneModifica.addEventListener('click', () => apriModifica(voce.id));
 
-  // Il nome sta in uno span suo: così la barratura del "preso" tocca
-  // il testo e non anche la matita.
+  // Il nome sta in uno span suo: la barratura e lo sbiadimento del
+  // "preso" valgono per il testo, non per il bottone che lo contiene.
   const nome = document.createElement('span');
   nome.className = 'nome';
   nome.textContent = voce.nome;
@@ -94,6 +126,11 @@ function creaRiga(voce) {
 }
 
 function carica() {
+  // Una riga in modifica sparisce con il ridisegno: il suo ascoltatore
+  // sul documento resterebbe attaccato a un campo non più nella pagina.
+  staccaModificaAperta?.();
+  staccaModificaAperta = null;
+
   const voci = leggiVoci();
   lista.innerHTML = '';
   listaCompletate.innerHTML = '';
@@ -154,7 +191,16 @@ function cambiaStato(id, preso, li) {
 
 function tornaAllaRiga(id) {
   carica();
-  document.querySelector(`[data-id="${id}"] .voce`)?.focus();
+
+  const voceTornata = document.querySelector(`[data-id="${id}"] .voce`);
+  if (voceTornata) {
+    voceTornata.focus();
+    return;
+  }
+
+  // La voce può non esserci più: svuotare il campo la elimina. Il
+  // titolo dice dove si è finiti, invece di lasciare il focus sul body.
+  titolo.focus();
 }
 
 function apriModifica(id) {
@@ -174,39 +220,83 @@ function apriModifica(id) {
   campo.value = voce.nome;
   campo.setAttribute('aria-label', `Nuovo nome per ${voce.nome}`);
 
-  const bottoneSalva = document.createElement('button');
-  bottoneSalva.type = 'submit';
-  bottoneSalva.textContent = 'Salva';
+  // Niente bottone "Salva": con un solo campo, Invio invia il form da
+  // sé, e toccare altrove conclude comunque la modifica. Un bottone in
+  // più direbbe che senza di lui il lavoro andrebbe perso, e non è vero.
+  formModifica.append(campo);
 
-  formModifica.append(campo, bottoneSalva);
-
-  formModifica.addEventListener('submit', (e) => {
-    e.preventDefault();
-
+  function scriviModifica() {
     const nuovoNome = campo.value.trim();
+    const voci = leggiVoci();
+
+    // Voce lasciata vuota: sparisce. È il modo più diretto per toglierla
+    // e non obbliga a centrare la ✕.
     if (!nuovoNome) {
-      campo.focus();
+      clearTimeout(inTransito.get(id));
+      inTransito.delete(id);
+      salvaVoci(voci.filter((v) => v.id !== id));
       return;
     }
 
-    const voci = leggiVoci();
     const daModificare = voci.find((v) => v.id === id);
     if (daModificare) {
       daModificare.nome = nuovoNome;
       salvaVoci(voci);
     }
+  }
+
+  function chiudiSeFuori(e) {
+    if (formModifica.contains(e.target)) {
+      return;
+    }
+
+    // Il tocco che chiude la modifica si ferma qui: non deve anche
+    // aprire la riga toccata o spuntarla. Con la tastiera aperta che
+    // copre metà schermo si esce spesso mirando male, e l'intera riga
+    // apre la modifica: senza questo si finirebbe a correggere una voce
+    // che non si voleva nemmeno toccare.
+    //
+    // Solo dentro la lista: toccando il campo "Aggiungi" il click deve
+    // passare, altrimenti non prenderebbe il focus.
+    if (e.target.closest('#lista li, #lista-completate li')) {
+      inghiottiIlProssimoClick();
+    }
+
+    scriviModifica();
+    tornaAllaRiga(id);
+  }
+
+  formModifica.addEventListener('submit', (e) => {
+    e.preventDefault();
+    scriviModifica();
     tornaAllaRiga(id);
   });
 
   campo.addEventListener('keydown', (e) => {
+    // Esc annulla: esce senza scrivere niente, nome di prima intatto.
     if (e.key === 'Escape') {
       tornaAllaRiga(id);
     }
   });
 
   li.replaceChildren(formModifica);
+
+  // pointerdown e non click: si deve chiudere appena il dito tocca
+  // altrove, non al rilascio.
+  staccaModificaAperta = () => {
+    document.removeEventListener('pointerdown', chiudiSeFuori);
+  };
+  document.addEventListener('pointerdown', chiudiSeFuori);
+
   campo.focus();
-  campo.select();
+
+  // Cursore in fondo, testo non selezionato: la modifica serve quasi
+  // sempre a precisare una voce già scritta ("latte" → "latte intero"),
+  // non a riscriverla. Selezionando tutto, il primo tasto premuto
+  // cancellerebbe la parola. La posizione va imposta: dopo focus() il
+  // punto di partenza non è garantito uguale su tutti i browser.
+  const fine = campo.value.length;
+  campo.setSelectionRange(fine, fine);
 }
 
 function rimuovi(id) {
