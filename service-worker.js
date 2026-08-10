@@ -1,4 +1,4 @@
-const CACHE_NAME = 'lista-spesa-v38';
+const CACHE_NAME = 'lista-spesa-v39';
 const RISORSE_IN_CACHE = [
   './',
   'index.html',

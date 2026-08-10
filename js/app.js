@@ -263,6 +263,17 @@ form.addEventListener('submit', (e) => {
   salvaVoci(voci);
   input.value = '';
   carica();
+
+  // Col campo fisso in alto si può aggiungere anche stando in fondo alla
+  // lista, ma la voce nuova nasce in cima: senza risalire resterebbe
+  // fuori dallo schermo. Scorrere invece di saltare mostra che ci si è
+  // spostati, e da dove. Chi ha chiesto meno movimento salta e basta.
+  window.scrollTo({
+    top: 0,
+    behavior: matchMedia('(prefers-reduced-motion: reduce)').matches
+      ? 'auto'
+      : 'smooth'
+  });
 });
 
 // Fissa gli id al primo avvio della nuova versione: da qui in poi ogni
