@@ -40,6 +40,50 @@ form {
   gap: 0.5rem;
 }
 
+/* Con una lista lunga il campo usciva dallo schermo: per aggiungere una
+   voce bisognava risalire fino in cima. Restando incollato è sempre a
+   portata. Occupa il 6% dello schermo, ben sotto il 10% oltre il quale
+   una striscia fissa comincia a dare fastidio. */
+#form-aggiungi {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  /* Senza un fondo suo le voci gli passerebbero dietro in trasparenza. */
+  background: var(--sfondo);
+  /* env() vale zero nel browser: serve da installata, dove in cima allo
+     schermo c'è la tacca e il campo ci finirebbe sotto. */
+  padding-top: calc(0.75rem + env(safe-area-inset-top));
+  padding-bottom: 0.75rem;
+}
+
+/* Il bordo netto del campo sembrerebbe l'inizio dell'elenco. La
+   sfumatura fa svanire le voci mentre gli passano dietro, e così dice
+   che sopra la lista continua.
+
+   Va dal colore di sfondo a trasparente, cioè si disegna sopra il
+   proprio sfondo: finché sotto non passa niente è invisibile, e si
+   accende da sé quando arriva una voce. Non serve accorgersi dello
+   scorrimento per attivarla.
+
+   Fuori dal flusso, così non diventa un terzo elemento della riga
+   accanto al campo e al bottone. */
+#form-aggiungi::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  height: 1.5rem;
+  background: linear-gradient(to bottom, var(--sfondo), transparent);
+  pointer-events: none;
+}
+
+/* Lo stacco vale quanto la sfumatura: con meno, da fermi la prima voce
+   le finirebbe già sotto e sembrerebbe sbiadita senza motivo. */
+#lista {
+  margin-top: 1.75rem;
+}
+
 input {
   flex: 1;
   min-width: 0;
