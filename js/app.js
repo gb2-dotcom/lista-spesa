@@ -245,6 +245,24 @@ function apriModifica(id) {
     }
   }
 
+  // Le vie d'uscita sono parecchie e possono accavallarsi: chiudendo si
+  // toglie il campo dalla pagina, e togliere un campo col focus ne
+  // provoca la perdita, che è a sua volta una via d'uscita. Senza questo
+  // interruttore la seconda ripasserebbe sopra alla prima.
+  let conclusa = false;
+
+  function chiudi(salvando) {
+    if (conclusa) {
+      return;
+    }
+    conclusa = true;
+
+    if (salvando) {
+      scriviModifica();
+    }
+    tornaAllaRiga(id);
+  }
+
   function chiudiSeFuori(e) {
     if (formModifica.contains(e.target)) {
       return;
@@ -262,28 +280,37 @@ function apriModifica(id) {
       inghiottiIlProssimoClick();
     }
 
-    scriviModifica();
-    tornaAllaRiga(id);
+    chiudi(true);
   }
 
   formModifica.addEventListener('submit', (e) => {
     e.preventDefault();
-    scriviModifica();
-    tornaAllaRiga(id);
+    chiudi(true);
   });
 
   campo.addEventListener('keydown', (e) => {
     // Esc annulla: esce senza scrivere niente, nome di prima intatto.
     if (e.key === 'Escape') {
-      tornaAllaRiga(id);
+      chiudi(false);
     }
   });
+
+  // La tastiera di iOS ha un tasto "Fine" tutto suo, nella barra sopra i
+  // tasti: è parte del browser, non della pagina, e non produce nessun
+  // tocco su cui agganciarsi. Senza questo il campo resterebbe aperto e
+  // senza tastiera, una riga sola diversa da tutte le altre. Perdere il
+  // focus è il segnale che vale in ogni caso, anche uscendo dall'app.
+  campo.addEventListener('blur', () => chiudi(true));
 
   li.replaceChildren(formModifica);
 
   // pointerdown e non click: si deve chiudere appena il dito tocca
   // altrove, non al rilascio.
   staccaModificaAperta = () => {
+    // Se la riga sparisce per un ridisegno altrui, la modifica è finita
+    // comunque: senza segnarlo, la perdita di focus che ne consegue
+    // farebbe ripartire il salvataggio su un campo già staccato.
+    conclusa = true;
     document.removeEventListener('pointerdown', chiudiSeFuori);
   };
   document.addEventListener('pointerdown', chiudiSeFuori);
