@@ -18,6 +18,11 @@
 
   <main>
     <form id="form-aggiungi">
+      <!-- Il placeholder da solo farebbe da nome accessibile, ma sparisce
+           appena si scrive: chi usa lo screen reader e torna sul campo a
+           metà non saprebbe più cosa ci va. L'etichetta è nascosta alla
+           vista perché il titolo della pagina la dice già. -->
+      <label class="solo-lettori" for="input-voce">Nuova voce</label>
       <input id="input-voce" type="text" placeholder="Es. latte" required>
       <button type="submit">Aggiungi</button>
     </form>
